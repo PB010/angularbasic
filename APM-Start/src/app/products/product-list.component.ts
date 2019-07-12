@@ -3,7 +3,6 @@ import {IProduct} from './product';
 import {ProductService} from './product.service';
 
 @Component({
-  selector: 'pm-products',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
@@ -13,6 +12,7 @@ export class ProductListComponent implements OnInit{
   imageWidth: number = 50;
   imageMargin: number = 2;
   showImage: boolean = false;
+  errorMessage: string;
 
   _listFilter: string;
 get listFilter(): string {
@@ -35,9 +35,14 @@ set listFilter(value: string) {
   }
 
   ngOnInit():   void {
-    this.products = this.productService.getProducts();
-    this.filteredProducts = this.products;
-  }
+    this.productService.getProducts().subscribe(
+      products => {
+          this.products = products,
+          this.filteredProducts = this.products;
+      },
+      error => this.errorMessage = <any>error
+    );
+}
 
   performFilter(filterBy: string): IProduct[] {
     filterBy = filterBy.toLocaleLowerCase();
